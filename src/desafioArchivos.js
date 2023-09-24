@@ -24,15 +24,16 @@ class ProductManager{
     }
 
     async createProduct(product){
-        if(!product.nombre || !product.descripcion || !product.precio || !product.imagen || !product.codigo || !product.stock){
+        // to do status default true 
+        if(!product.nombre || !product.descripcion || !product.precio || !product.imagen || !product.codigo || !product.stock || !product.status || !product.category ){
             return 'falta informacion';
         }
         try {
-            const products = await this.getProducts()
-
             if (await this.#codigoExistente(product.codigo)) {
                 return 'El codigo del producto ya existe';
             }
+            
+            const products = await this.getProducts()
             
             product.id = await this.#generarIdProducto()
 
@@ -67,12 +68,23 @@ class ProductManager{
     async updateProduct(idProducto, newProduct){
         const products = await this.getProducts()
         const product = await this.getProductById(idProducto)
+        if (product === undefined){
+            return -1
+        }
         if (product){
+            // {"price": 200, "stock": "200", "id":"1"}
+            // "4"
+            // ["price", "stock", "id"]
             Object.keys(newProduct).map((key => {
-                product[key] = newProduct[key] // actualizando los atributos del objeto viejo
+                //key = "id"
+                //newProduct[key] = "1"
+                // to do arreglar key
+                if (key !== "id"){
+                    product[key] = newProduct[key] // actualizando los atributos del objeto viejo
+                }
             }))
         const productIndex = products.findIndex((product) => {product.id === idProducto})
-        products.productIndex = product // cambiando el registro del objeto viejo por el nuevo
+        products[productIndex] = product // cambiando el registro del objeto viejo por el nuevo
         // guardar en json
         fs.promises.writeFile(this.path, JSON.stringify(products))
         return product
@@ -84,6 +96,7 @@ class ProductManager{
         return products.length
         ? products[products.length-1].id+1
         : 1
+        // to do que no se pise el id, ramdon
     }
 
     async #codigoExistente(codigo) {
@@ -100,7 +113,9 @@ const product1 = {
     precio : '200',
     imagen : 'img',
     codigo : '432',
-    stock :'4'
+    stock :'4',
+    category: 'tecnologia', 
+    status:true
 }
 
 const product2 = {
@@ -109,7 +124,9 @@ const product2 = {
     precio : '100',
     imagen : 'img',
     codigo : '367',
-    stock :'13'
+    stock :'13',
+    category: 'tecnologia', 
+    status:true
 }
 
 const product3 = {
@@ -118,7 +135,9 @@ const product3 = {
     precio : '230',
     imagen : 'img',
     codigo : '456',
-    stock :'9'
+    stock :'9',
+    category: 'tecnologia', 
+    status:true
 }
 
 const product4 = {
@@ -127,7 +146,9 @@ const product4 = {
     precio : '400',
     imagen : 'img',
     codigo : '127',
-    stock :'1'
+    stock :'1',
+    category: 'tecnologia', 
+    status:true
 }
 
 const editedProduct = {
@@ -151,5 +172,3 @@ async function test(){
 test()
 
 export const productManager = new ProductManager('Product.json')
-
- 
