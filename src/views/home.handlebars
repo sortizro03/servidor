@@ -1,0 +1,19 @@
+<h3>lista de todos los prodcutos agregados ahsta el momento</h3>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>src="/js/index.js"</script>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Productos</title>
+</head>
+<body>
+    <h1>Lista de Productos</h1>
+    <ul>
+        {{#each Productos}}
+            <li>{{this.nombre}} - Precio: {{this.precio}}</li>
+        {{/each}}
+    </ul>
+</body>
+</html>
