@@ -9,7 +9,7 @@ const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static())
+// app.use(express.static())
 app.use(express.static(__dirname+'/public')) // puedes acceder de manera faNfcDirectional, sin crear un endpoint
 
 // handlebars

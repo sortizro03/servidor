@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { cartsManager } from "../cartsManager";
+import { cartsManager } from "../cartsManager.js";
 const router = Router();
 
 router.post('/', async (req, res) => {

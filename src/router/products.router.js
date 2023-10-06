@@ -1,5 +1,5 @@
 import { Router } from "express"; // solo necesitamos la funcionalidad de express que maneje las rutas
-import { productManager } from './desafioArchivos.js'
+import { productManager } from '../desafioArchivos.js'
 const router = Router();
 
 router.get('/', async (req, res) => {

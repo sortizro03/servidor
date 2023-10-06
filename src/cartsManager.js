@@ -1,4 +1,5 @@
 import fs from'fs'
+import { getFindIndex } from './utils.js'
 
 class CartsManager {
     constructor(path){
@@ -9,12 +10,16 @@ class CartsManager {
         try {
             if(fs.existsSync(this.path)){
                 const info = await fs.promises.readFile(this.path,'utf-8')
+                if(!info) {
+                    console.log('Info inexistente');
+                    return []
+                }
                 const carts = JSON.parse(info)
-                return carts
-
-            } else {
-                return []
+                if (carts) {
+                    return carts
+                }
             }
+            return []
         } catch (error) {
             return error
         }
@@ -41,22 +46,36 @@ class CartsManager {
     }
 
     async getCartById(cartId){
+        const cartIdNumber = parseInt(cartId)
         const carts = await this.getCarts()
-        const cart = carts.find(e=>e.id === cartId)
+        const cart = carts.find(e=>e.id === cartIdNumber)
         return cart
 
     }
 
+    async updateCartFile(cartId, newCart) {
+        const carts = await this.getCarts()
+        const index = getFindIndex(carts, cartId) //carts.findIndex(cart => cart.id === cartId)
+        if (index === -1) {
+            return 'Error al actualizar carrito'
+        }
+        carts[index] = newCart;
+        return carts;
+    }
+
     async addProductCart(cartId, productId){
         const cart = await this.getCartById(cartId)
-        const index = cart.products.findIndex(product => productId=== cartId);
+        const index = getFindIndex(cart.product, productId)// cart.product.findIndex(product => product.id=== productId)
         if (index !== -1) {
             // Si existe, incrementar la propiedad quantity en uno
-            cart.products[index].quantity += 1;
-          } else {
+            cart.product[index].quantity += 1;
+        } else {
             // Si no existe, agregar un nuevo objeto al array
-            cart.products.push({ id: id, quantity: 1 });
+            cart.product.push({ id: productId, quantity: 1 })
         }
+        const newCarts = await this.updateCartFile(cartId, cart)
+        const jsonCarts = JSON.stringify(newCarts)
+        await fs.promises.writeFile(this.path, jsonCarts);
     }   
 
     async #generateIdCart(){
